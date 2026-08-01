@@ -48,7 +48,7 @@ The Python environment installs the packages listed in `requirements.txt`:
 
 ## System Packages
 
-The setup script installs the packages listed in packages.txt:
+The setup script installs the packages listed in `packages.txt`:
 
 - doxygen
 - sqlite3
