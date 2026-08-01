@@ -18,7 +18,7 @@ ts=$(date +%y-%m-%d-%H-%M)
 #-------------------------------------------------------------------------------
 main()
  {
-    # configure local bin
+    # Configure local bin
     echo "Configuring your local bin"
 
     dotfiles_bin="$HOME/dev-bootstrap-environment/bin"
@@ -27,17 +27,17 @@ main()
 
     echo "$LEADER Creating Link to $home_bin from $dotfiles_bin folder"
 
-    # remove link if already exists
+    # Remove link if already exists
     if [ -e "$home_bin" ] || [ -L "$home_bin" ]; then
         echo "$LEADER Removing old link"
         rm -rf "$home_bin"
     fi 
 
-    # create new link
+    # Create new link
     echo "$LEADER Creating new Link"
     ln -s "$dotfiles_bin" "$home_bin"
 
-    # add ~/bin link to path if isn't already configured
+    # Add ~/bin link to path if isn't already configured
     if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$HOME/.bashrc"; then
         echo "$LEADER Adding $home_bin to your PATH variable in .bashrc"
         echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
@@ -51,51 +51,51 @@ main()
     conda_path="$HOME/miniconda3"
     CONDA_INSTALL_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 
-    # remove conda if it exists
+    # Remove conda if it exists
     if [ -d "$conda_path" ]; then
         echo "$LEADER Removing the conda folder"
         rm -rf "$conda_path"
     fi 
 
-    # download conda
+    # Download conda
     echo "$LEADER Downloading the conda setup script"
     wget "$CONDA_INSTALL_URL" -O "$conda_script"
     
-    # install conda
+    # Install conda
     echo "$LEADER Installing conda"
     bash "$conda_script" -b -p "$conda_path"
 
-    # initialize conda and make it available in current session
+    # Initialize conda and make it available in current session
     "$conda_path/bin/conda" init bash
     source "$conda_path/etc/profile.d/conda.sh" 
 
-    # create conda environment
+    # Create conda environment
     echo "$LEADER Creating a test conda environment"
     CONDA_ENV="test_env"
     conda create -n "$CONDA_ENV" python=3.10 -y
 
-    # activate conda environment
+    # Activate conda environment
     echo "$LEADER Activating the test conda environment"
     conda activate "$CONDA_ENV"
 
-    # install packages
+    # Install packages
     echo "$LEADER Installing the test conda environment"
     conda install --file requirements.txt -y
 
-    # test
+    # Test
     python verify_python_env.py
 
-    # deactivate conda environment
+    # Deactivate conda environment
     echo "$LEADER Deactivating the test conda environment"
     conda deactivate
 
-    # clean-up
+    # Clean-up
     echo "$LEADER Removing the conda setup script"
     rm "$conda_script"
 
     echo "$LEADER Installing packages"
 
-    # update and install packages
+    # Update and install packages
     echo "Updating..."
     sudo apt update
     while read -r package || [ -n "$package" ]; do
@@ -103,7 +103,7 @@ main()
         sudo apt install -y "$package"
     done < packages.txt
 
-    # verify installation
+    # Verify installation
     echo "$LEADER Verifying package installation(s)"
     success=0
     fail=0
@@ -120,14 +120,14 @@ main()
 
     echo "$LEADER Running system information script"
 
-    # activate conda env
+    # Activate conda env
     echo "$LEADER Activating conda environment"
     conda activate test_env
 
-    # run script
-    python verify_python_env.py
+    # Run script
+    python system_info.py
 
-    # check exit code
+    # Check exit code
     echo "$LEADER Checking exit code"
     if [ $? -eq 0 ]; then
         echo "System information script successful"
@@ -135,12 +135,9 @@ main()
         echo "System information script failed with exit code $?"
     fi
 
-    # deactivate conda env
+    # Deactivate conda env
     echo "$LEADER Deactivating conda environment"
     conda deactivate
-
-    #echo "To complete your GitHub Setup run the following commnad:"
-    #echo "$DOTFILES gh auth login $ts"
 
     # reset bash
     exec bash
